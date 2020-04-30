@@ -1,7 +1,9 @@
 from flask import Flask , request
+from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index():
@@ -9,4 +11,6 @@ def index():
     print(x)
     return ",".join( x )
 
-app.run(threaded = True, port = 80)
+# app.run(threaded = True, host='0.0.0.0')
+# app.run(host='0.0.0.0')
+app.run()
