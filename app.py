@@ -77,5 +77,4 @@ def logout():
     x = [ ip , datetime.now().strftime('%Y%m%d%H%M%S')]
     return ",".join(x)
 
-if __name__ == "__main__":
-    app.run()
+app.run(threaded = True )
