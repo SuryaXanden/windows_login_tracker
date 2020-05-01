@@ -71,6 +71,10 @@ def logout():
             db[ real_index_of_element ] = rec
 
             break
+
+    for rec in db:
+        if rec['logout'] == "":
+            rec['logout'] = rec['login']
     
     print(json.dumps(db))
 
