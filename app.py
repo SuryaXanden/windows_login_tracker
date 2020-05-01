@@ -15,13 +15,11 @@ app = Flask(__name__)
 
 @app.route("/" , methods = ["GET" , "POST"])
 def index():
+    global db
+    print(json.dumps(db))
     if request.method == "GET":
-        global db
-        print(json.dumps(db))
         return render_template("index.html")
     if request.method == "POST":
-        global db
-        print(json.dumps(db))
         return jsonify(db)
 
 @app.route("/login")
