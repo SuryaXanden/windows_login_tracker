@@ -77,4 +77,4 @@ def logout():
     x = [ ip , datetime.now().strftime('%Y%m%d%H%M%S')]
     return ",".join(x)
 
-app.run(threaded = True )
+app.run(threaded = True , port=32085 , host="0.0.0.0")
