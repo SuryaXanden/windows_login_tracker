@@ -24,7 +24,7 @@ def index():
 
 @app.route("/login")
 def login():
-    ip = request.remote_addr
+    ip= request.environ.get( 'REMOTE_ADDR' )
 
     global db
     global data_model
@@ -47,7 +47,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    ip= request.remote_addr
+    ip= request.environ.get( 'REMOTE_ADDR' )
 
     global db
     global data_model
@@ -73,7 +73,7 @@ def logout():
             break
 
     for rec in db:
-        if rec['logout'] == "":
+        if rec['ip'] == ip and rec['logout'] == "":
             rec['logout'] = rec['login']
     
     print(json.dumps(db))
