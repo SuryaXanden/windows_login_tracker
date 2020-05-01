@@ -3,6 +3,13 @@ from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 import json
 
+
+conn = sqlite3.connect('login_activity.db')
+
+c = conn.cursor()
+table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
+c.execute(table_setup_query)
+
 app = Flask(__name__)
 
 @app.route("/" , methods = ["GET" , "POST"])
