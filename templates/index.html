@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login tracker</title>
+</head>
+
+<body>
+    <table id="activity" border=5>
+        <tr>
+            <th>ID</th>
+            <th>IP</th>
+            <th>Login</th>
+            <th>Logout</th>
+            <th>Duration</th>
+        </tr>
+    </table>
+</body>
+<script>
+    window.onload = async () => {
+
+        let db = await fetch('http://127.0.0.1:5000', {
+            method: 'POST',
+            headers: {},
+            json: true
+        })
+        db = await db.json()
+
+        let ele = document.querySelector('#activity')
+        for (let log in db) {
+            let tr = document.createElement("tr")
+
+            let td1 = document.createElement('td')
+            td1.innerText = db[log].id
+            tr.appendChild(td1)
+
+            let td2 = document.createElement('td')
+            td2.innerText = db[log].ip
+            tr.appendChild(td2)
+
+            let td3 = document.createElement('td')
+            td3.innerText = db[log].login
+            tr.appendChild(td3)
+
+            let td4 = document.createElement('td')
+            td4.innerText = db[log].logout
+            tr.appendChild(td4)
+
+            let td5 = document.createElement('td')
+            td5.innerText = db[log].duration
+            tr.appendChild(td5)
+
+            ele.appendChild(tr)
+        }
+    }
+</script>
+
+</html>
