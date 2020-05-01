@@ -16,9 +16,12 @@ app = Flask(__name__)
 @app.route("/" , methods = ["GET" , "POST"])
 def index():
     if request.method == "GET":
+        global db
+        print(json.dumps(db))
         return render_template("index.html")
     if request.method == "POST":
         global db
+        print(json.dumps(db))
         return jsonify(db)
 
 @app.route("/login")
@@ -54,18 +57,16 @@ def logout():
     for i in range( len(db) , 0 , -1 ) :
         
         real_index_of_element = len(db)-i-1
-        real_element = db[ real_index_of_element ]
 
-        doc = real_element
+        doc = db[ real_index_of_element ]
 
         if doc['ip'] == ip and doc['logout'] == "" and doc['login'] :
             now = datetime.now()
             rec = dict(data_model)
 
-            rec['login'] = doc['login']
             rec['id'] = doc['id']
             rec['ip'] = doc['ip']
-
+            rec['login'] = doc['login']
             rec['logout'] = now.strftime('%Y%m%d%H%M%S')
             rec['duration'] = int( (now - datetime.strptime( doc['login'] , '%Y%m%d%H%M%S' )).total_seconds() )
 
