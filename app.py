@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 import json
-
+import os
 db = []
 data_model = {
     "id" : 0,
@@ -77,4 +77,5 @@ def logout():
     x = [ ip , datetime.now().strftime('%Y%m%d%H%M%S')]
     return ",".join(x)
 
-app.run(threaded = True , port=32085 , host="0.0.0.0")
+port = int(os.environ.get("PORT", 5000))
+app.run(host='0.0.0.0', port=port, threaded = True ,)
