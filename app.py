@@ -1,14 +1,15 @@
-import sqlite3
 from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 import json
 
-
-conn = sqlite3.connect('login_activity.db')
-
-c = conn.cursor()
-table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
-c.execute(table_setup_query)
+db = []
+data_model = {
+    "id" : 0,
+    "ip" : "",
+    "login" : "",
+    "logout" : "",
+    "duration" : 0
+}
 
 app = Flask(__name__)
 
@@ -17,44 +18,29 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
     if request.method == "POST":
-
-        global c
-
-        table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
-        c.execute(table_setup_query)
-
-        db = [ list(row) for row in c.execute(f"select * from details order by login desc") ]
-
-        db = [{
-                "id" : doc[0],
-                "ip" : doc[1],
-                "login" : doc[2],
-                "logout" : doc[3],
-                "duration" : doc[4]
-        } for doc in db ]
-
-        print(db)
-
+        global db
         return jsonify(db)
 
 @app.route("/login")
 def login():
     ip = request.remote_addr
 
-    # junk
+    global db
+    global data_model
 
-    global c
+    doc = dict(data_model)
 
-    table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
-    c.execute(table_setup_query)
+    last_id = db[-1]['id'] if len(db) else 0
 
-    insert_query = f"INSERT INTO details(ip,login) VALUES ('{ip}',datetime('now'))"
-    c.execute(insert_query)
-    conn.commit()
-    conn.close()
+    doc['id'] =  last_id + 1 if isinstance(last_id, int) else 1
+    doc['ip'] = ip
+    doc['login'] = datetime.now().strftime('%Y%m%d%H%M%S')
+    
+    db.append( doc )
+    
+    print(json.dumps(db))
 
     x = [ip , datetime.now().strftime('%Y%m%d%H%M%S')]
-    print(x)
 
     return ",".join(x)
 
@@ -62,22 +48,34 @@ def login():
 def logout():
     ip= request.remote_addr
 
-    # junk
-    global c
+    global db
+    global data_model
 
-    table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
-    c.execute(table_setup_query)
+    for i in range( len(db) , 0 , -1 ) :
+        
+        real_index_of_element = len(db)-i-1
+        real_element = db[ real_index_of_element ]
 
-    q = [ val for ar in c.execute(f"select * from details where ip is '{ip}' order by login desc limit 1") for val in list(ar) ]
+        doc = real_element
 
-    duration_query = f"""update details set logout = datetime('now') , duration = strftime('%s', datetime('now') ) - strftime('%s', '{q[2]}' ) where id = {q[0]}"""
+        if doc['ip'] == ip and doc['logout'] == "" and doc['login'] :
+            now = datetime.now()
+            rec = dict(data_model)
 
-    c.execute( duration_query )
-    conn.commit()
-    conn.close()
+            rec['login'] = doc['login']
+            rec['id'] = doc['id']
+            rec['ip'] = doc['ip']
+
+            rec['logout'] = now.strftime('%Y%m%d%H%M%S')
+            rec['duration'] = int( (now - datetime.strptime( doc['login'] , '%Y%m%d%H%M%S' )).total_seconds() )
+
+            db[ real_index_of_element ] = rec
+
+            break
+    
+    print(json.dumps(db))
 
     x = [ ip , datetime.now().strftime('%Y%m%d%H%M%S')]
-    print(x)
     return ",".join(x)
 
 if __name__ == "__main__":
