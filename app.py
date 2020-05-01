@@ -18,9 +18,8 @@ def index():
         return render_template("index.html")
     if request.method == "POST":
 
-        conn = sqlite3.connect('login_activity.db')
+        global c
 
-        c = conn.cursor()
         table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
         c.execute(table_setup_query)
 
@@ -43,9 +42,9 @@ def login():
     ip = request.remote_addr
 
     # junk
-    conn = sqlite3.connect('login_activity.db')
 
-    c = conn.cursor()
+    global c
+
     table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
     c.execute(table_setup_query)
 
@@ -64,9 +63,8 @@ def logout():
     ip= request.remote_addr
 
     # junk
-    conn = sqlite3.connect('login_activity.db')
+    global c
 
-    c = conn.cursor()
     table_setup_query = '''CREATE TABLE IF NOT EXISTS details (id integer primary key autoincrement, ip text, login timestamp, logout timestamp, duration number)'''
     c.execute(table_setup_query)
 
